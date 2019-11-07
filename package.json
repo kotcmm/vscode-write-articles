@@ -1,0 +1,73 @@
+{
+    "name": "vscode-write-articles",
+    "displayName": "vscode-write-articles",
+    "description": "vscode write article and multiple publish",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.39.0"
+    },
+    "license": "MIT",
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onView:articlesExplorer"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [{
+            "command": "cnblog-account.login",
+            "title": "cnblog account login",
+            "category": "account"
+        }],
+        "viewsContainers": {
+            "activitybar": [{
+                "id": "write-articles",
+                "title": "write-articles",
+                "icon": "resources/write-articles.svg"
+            }]
+        },
+        "views": {
+            "write-articles": [{
+                    "id": "articlesExplorer",
+                    "name": "文章列表"
+                },
+                {
+                    "id": "loginExplorer",
+                    "name": "登录信息"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "yarn run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "yarn run compile",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.1",
+        "@types/request": "2.48.1",
+        "@types/request-promise": "4.1.42",
+        "@types/keytar": "4.0.1",
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^12.11.7",
+        "@types/sqlite3 ": "^3.1.5",
+        "@types/vscode": "^1.39.0",
+        "form-data": "^3.0.0",
+        "glob": "^7.1.5",
+        "mocha": "^6.2.2",
+        "tslint": "^5.20.0",
+        "typescript": "^3.6.4",
+        "vscode-test": "^1.2.2"
+    },
+    "dependencies": {
+        "ffi-napi": "^2.4.5",
+        "form-data": "^3.0.0",
+        "ref-napi": "^1.4.2",
+        "ref-struct-napi": "^1.1.0",
+        "request": "2.88.0",
+        "request-promise": "4.2.2"
+    }
+}
