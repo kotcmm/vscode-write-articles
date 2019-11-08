@@ -5,7 +5,7 @@ import { LoginProvider } from './login-provider';
 export function activate(context: ExtensionContext) {
 
 	const helper = new AccountsHelper(context);
-	const loginProvider = new LoginProvider(helper.helpers);
+	const loginProvider = new LoginProvider(helper.helpers, context);
 	window.createTreeView('loginExplorer', { treeDataProvider: loginProvider });
 
 	return Promise.resolve(helper.helpers);

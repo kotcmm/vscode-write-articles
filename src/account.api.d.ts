@@ -3,8 +3,10 @@ import { Event } from "vscode";
 export type LoginStatus = 'Initializing' | 'LoggingIn' | 'LoggedIn' | 'LoggedOut';
 
 export interface Account {
+    readonly userName: string;
     readonly status: LoginStatus;
-    readonly onStatusChanged: Event<LoginStatus>;
+    readonly onStatusChanged: Event<LoginHelper>;
+    readonly getCookies: () => Promise<string>;
 }
 
 export interface Cookie {
@@ -25,5 +27,7 @@ export interface Cookie {
 
 export interface LoginHelper {
     readonly name: string;
+    readonly iconPath: string;
+    readonly account: Account;
     readonly login: () => Promise<void>;
 }

@@ -11,24 +11,30 @@
         "Other"
     ],
     "activationEvents": [
-        "onView:articlesExplorer"
+        "onView:articlesExplorer",
+        "onView:loginExplorer"
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "commands": [{
-            "command": "cnblog-account.login",
-            "title": "cnblog account login",
-            "category": "account"
-        }],
+        "commands": [
+            {
+                "command": "cnblog-account.login",
+                "title": "cnblog account login",
+                "category": "account"
+            }
+        ],
         "viewsContainers": {
-            "activitybar": [{
-                "id": "write-articles",
-                "title": "write-articles",
-                "icon": "resources/write-articles.svg"
-            }]
+            "activitybar": [
+                {
+                    "id": "write-articles",
+                    "title": "write-articles",
+                    "icon": "resources/write-articles.svg"
+                }
+            ]
         },
         "views": {
-            "write-articles": [{
+            "write-articles": [
+                {
                     "id": "articlesExplorer",
                     "name": "文章列表"
                 },

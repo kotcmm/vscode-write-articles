@@ -1,4 +1,4 @@
-import { TreeDataProvider, Event, TreeItem, ProviderResult, EventEmitter } from "vscode";
+import { TreeDataProvider, Event, TreeItem, ProviderResult, EventEmitter, ExtensionContext } from "vscode";
 import { LoginHelper } from "./account.api";
 
 export class LoginProvider implements TreeDataProvider<LoginHelper>{
@@ -10,13 +10,17 @@ export class LoginProvider implements TreeDataProvider<LoginHelper>{
         this._onDidChangeTreeData.fire();
     }
 
-    constructor(private helpers: Array<LoginHelper>) {
-
+    constructor(private helpers: Array<LoginHelper>,
+        private context: ExtensionContext) {
+        helpers.forEach(helper => {
+            helper.account.onStatusChanged(s => this._onDidChangeTreeData.fire(s));
+        });
     }
 
     getTreeItem(element: LoginHelper): TreeItem | Thenable<TreeItem> {
         return {
-            label: element.name
+            label: `${element.name}:${element.account.userName}`,
+            iconPath: this.context.asAbsolutePath(element.iconPath)
         };
     }
 
