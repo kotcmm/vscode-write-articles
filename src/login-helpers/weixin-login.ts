@@ -1,7 +1,11 @@
 import { LoginHelper } from "../account.api";
 import { AbstractLoginHelper } from "./abstract-login";
 
-const dataRegexp = /data:([ \r\n]*)\{(.|\n)*?\}/g;
+const dataRegexp = /data:([ \r\n]*)\{(.|\n)*?\}/;
+const protocol = "https://";
+const baseHost = "mp.weixin.qq.com";
+const loginUri = `${protocol}${baseHost}`;
+const getUserUri = `${protocol}${baseHost}`;
 
 export class WeixinLoginHelper extends AbstractLoginHelper implements LoginHelper {
 
@@ -9,29 +13,26 @@ export class WeixinLoginHelper extends AbstractLoginHelper implements LoginHelpe
 
     name: string = "微信公众号";
 
+    loginUri: string = loginUri;
+
     constructor() {
         super();
     }
 
-    protected async initialize() {
+    protected async getUserName(): Promise<string> {
         let userInfo = await this.getUserInfo();
         if (userInfo && userInfo.nickName && userInfo.token) {
-            this.updateSuccessful(userInfo.nickName);
-        } else {
-            this.updateFailure();
+            return userInfo.nickName;
         }
-    }
-
-    async login(): Promise<void> {
-
+        return "";
     }
 
     protected async getCookies(): Promise<string> {
-        return this.getCookiesJoinStr("mp.weixin.qq.com");
+        return this.getCookiesJoinStr(baseHost);
     }
 
     private async getUserInfo() {
-        let userInfoData = await this.requestUserInfo("https://mp.weixin.qq.com");
+        let userInfoData = await this.requestGetWithCookie(getUserUri);
         if (userInfoData) {
             let datas = userInfoData.match(dataRegexp);
 

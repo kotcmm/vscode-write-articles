@@ -6,7 +6,9 @@ export function activate(context: ExtensionContext) {
 
 	const helper = new AccountsHelper(context);
 	const loginProvider = new LoginProvider(helper.helpers, context);
-	window.createTreeView('loginExplorer', { treeDataProvider: loginProvider });
+	const loginTree = window.createTreeView('loginExplorer', { treeDataProvider: loginProvider });
+
+	context.subscriptions.push(loginTree);
 
 	return Promise.resolve(helper.helpers);
 }

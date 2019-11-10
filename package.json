@@ -16,25 +16,24 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "commands": [
-            {
-                "command": "cnblog-account.login",
-                "title": "cnblog account login",
-                "category": "account"
+        "commands": [{
+            "command": "write-articles.login",
+            "title": "用户登录",
+            "category": "write-articles",
+            "icon": {
+                "light": "resources/light/login.svg",
+                "dark": "resources/dark/login.svg"
             }
-        ],
+        }],
         "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "write-articles",
-                    "title": "write-articles",
-                    "icon": "resources/write-articles.svg"
-                }
-            ]
+            "activitybar": [{
+                "id": "write-articles",
+                "title": "write-articles",
+                "icon": "resources/write-articles.svg"
+            }]
         },
         "views": {
-            "write-articles": [
-                {
+            "write-articles": [{
                     "id": "articlesExplorer",
                     "name": "文章列表"
                 },
@@ -43,6 +42,13 @@
                     "name": "登录信息"
                 }
             ]
+        },
+        "menus": {
+            "view/item/context": [{
+                "command": "write-articles.login",
+                "when": "view == loginExplorer",
+                "group": "inline"
+            }]
         }
     },
     "scripts": {

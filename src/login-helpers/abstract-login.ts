@@ -1,5 +1,5 @@
 import { Account, LoginStatus, LoginHelper, Cookie } from "../account.api";
-import { EventEmitter } from "vscode";
+import { EventEmitter, env, Uri } from "vscode";
 import { BrowserCookies } from "../browser-cookies";
 import * as request from 'request-promise';
 
@@ -13,6 +13,10 @@ export abstract class AbstractLoginHelper implements LoginHelper {
     abstract iconPath: string;
 
     abstract name: string;
+
+    abstract loginUri: string;
+
+    private waitLogin: NodeJS.Timeout | undefined;
 
     private onStatusChanged = new EventEmitter<LoginHelper>();
 
@@ -29,9 +33,39 @@ export abstract class AbstractLoginHelper implements LoginHelper {
         getCookies: this.getCookies
     };
 
-    protected abstract initialize(): Promise<void>;
+    protected abstract getUserName(): Promise<string>;
 
-    abstract login(): Promise<void>;
+    protected async initialize(): Promise<void> {
+        this.beginLoggingIn();
+        let userName = await this.getUserName();
+        if (userName) {
+            this.updateSuccessful(userName);
+        } else {
+            this.updateFailure();
+        }
+    }
+
+    async login(): Promise<void> {
+        await env.openExternal(Uri.parse(this.loginUri));
+        let runCount = 0;
+
+        this.tryStopWaitLogin();
+
+        this.waitLogin = setInterval(async () => {
+            if (this.account.status === "LoggedIn" || runCount >= 500) {
+                this.tryStopWaitLogin();
+            } else if (this.account.status !== "LoggingIn") {
+                await this.initialize();
+            }
+            runCount++;
+        }, 2 * 1000);
+    }
+
+    private tryStopWaitLogin() {
+        if (this.waitLogin) {
+            clearInterval(this.waitLogin);
+        }
+    }
 
     protected abstract getCookies(): Promise<string>;
 
@@ -58,13 +92,15 @@ export abstract class AbstractLoginHelper implements LoginHelper {
     }
 
     protected updateFailure() {
-        let account = <AccountWriteable>this.account;
-        account.userName = "未登录";
-        account.status = "LoggedOut";
-        this.onStatusChanged.fire(this);
+        if (this.account.userName !== "未登录") {
+            let account = <AccountWriteable>this.account;
+            account.userName = "未登录";
+            account.status = "LoggedOut";
+            this.onStatusChanged.fire(this);
+        }
     }
 
-    protected async requestUserInfo(uri: string): Promise<any> {
+    protected async requestGetWithCookie(uri: string): Promise<any> {
         const cookies = await this.getCookies();
         if (cookies === "") {
             return undefined;

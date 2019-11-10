@@ -1,35 +1,36 @@
 import { LoginHelper } from "../account.api";
 import { AbstractLoginHelper } from "./abstract-login";
 
+const protocol = "https://";
+const baseHost = "cnblogs.com";
+const loginUri = `${protocol}i-beta.${baseHost}`;
+const getUserUri = `${protocol}i-beta.${baseHost}/api/user`;
+
 export class CnblogLoginHelper extends AbstractLoginHelper implements LoginHelper {
 
     iconPath: string = "resources/cnblogs.svg";
 
     name: string = "博客园";
 
+    loginUri: string = loginUri;
+
     constructor() {
         super();
     }
 
-    protected async initialize() {
+    protected async getUserName(): Promise<string> {
         let userInfo = await this.getUserInfo();
         if (userInfo && userInfo.displayName) {
-            this.updateSuccessful(userInfo.displayName);
-        } else {
-            this.updateFailure();
+            return userInfo.displayName;
         }
-    }
-
-    async login(): Promise<void> {
-
+        return "";
     }
 
     protected async getCookies(): Promise<string> {
-        return this.getCookiesJoinStr("cnblogs.com");
+        return this.getCookiesJoinStr(baseHost);
     }
 
     private async getUserInfo() {
-        let userInfoData = await this.requestUserInfo("https://i-beta.cnblogs.com/api/user");
-        return userInfoData;
+        return await this.requestGetWithCookie(getUserUri);
     }
 }

@@ -23,7 +23,7 @@ export class AccountsHelper {
         this.helpers.push(new CsdnLoginHelper());
         this.helpers.push(new ZhihuLoginHelper());
 
-        context.subscriptions.push(commands.registerCommand('cnblog-account.login',
+        context.subscriptions.push(commands.registerCommand('write-articles.login',
             (loginHelper: LoginHelper) => loginHelper.login().catch(console.error)));
     }
 

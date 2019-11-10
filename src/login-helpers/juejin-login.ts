@@ -1,36 +1,37 @@
 import { LoginHelper } from "../account.api";
 import { AbstractLoginHelper } from "./abstract-login";
 
+const protocol = "https://";
+const baseHost = "juejin.im";
+const loginUri = `${protocol}${baseHost}/login`;
+const getUserUri = `${protocol}${baseHost}/auth`;
+
 export class JuejinLoginHelper extends AbstractLoginHelper implements LoginHelper {
 
     iconPath: string = "resources/juejin.svg";
 
     name: string = "掘金";
 
+    loginUri: string = loginUri;
+
     constructor() {
         super();
     }
 
-    protected async initialize() {
+    protected async getUserName(): Promise<string> {
         let userInfo = await this.getUserInfo();
         if (userInfo && userInfo.user && userInfo.user.username) {
-            this.updateSuccessful(userInfo.user.username);
-        } else {
-            this.updateFailure();
+            return userInfo.user.username;
         }
-    }
-
-    async login(): Promise<void> {
-
+        return "";
     }
 
     protected async getCookies(): Promise<string> {
-        return this.getCookiesJoinStr("juejin.im");
+        return this.getCookiesJoinStr(baseHost);
     }
 
     private async getUserInfo() {
-        let userInfoData = await this.requestUserInfo("https://juejin.im/auth");
+        let userInfoData = await this.requestGetWithCookie(getUserUri);
         return userInfoData;
-
     }
 }
